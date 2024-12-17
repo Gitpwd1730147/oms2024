@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzb.oms.mapper.FactoryMapper">
+  <resultMap id="BaseResultMap" type="com.tzb.oms.entity.Factory">
+    <!--@mbg.generated-->
+    <!--@Table factory-->
+    <id column="factory_id" jdbcType="INTEGER" property="factoryId" />
+    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
+    <result column="factory_bank_no" jdbcType="VARCHAR" property="factoryBankNo" />
+    <result column="factory_contact" jdbcType="VARCHAR" property="factoryContact" />
+    <result column="factory_desc" jdbcType="VARCHAR" property="factoryDesc" />
+    <result column="factory_code" jdbcType="VARCHAR" property="factoryCode" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    factory_id, factory_name, factory_bank_no, factory_contact, factory_desc, factory_code
+  </sql>
+
+<!--  获取工厂信息列表-->
+  <select id="selectAllFactory" resultMap="BaseResultMap">
+    select * from factory
+  </select>
+
+<!--  新增工厂信息-->
+  <insert id="insertFactory">
+    insert into factory (factory_name, factory_bank_no, factory_contact, factory_desc, factory_code)
+    values (#{factoryName},#{factoryBankNo},#{factoryContact},#{factoryDesc},#{factoryCode})
+  </insert>
+
+<!--  根据id修改工厂信息-->
+  <update id="updateFactory">
+    update factory
+    set
+    factory_name = #{factoryName},factory_bank_no = #{factoryBankNo},factory_contact = #{factoryContact},factory_desc = #{factoryDesc},factory_code = #{factoryCode}
+    where factory_id = #{factoryId}
+  </update>
+
+<!--  根据ID删除工厂信息-->
+  <delete id="deleteFactoryById">
+    delete from factory where factory_id = #{factoryId}
+  </delete>
+</mapper>

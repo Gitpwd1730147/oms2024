@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzb.oms.mapper.ShipmentInfoMapper">
+  <resultMap id="BaseResultMap" type="com.tzb.oms.entity.ShipmentInfo">
+    <!--@mbg.generated-->
+    <!--@Table shipment_info-->
+    <id column="shipment_id" jdbcType="INTEGER" property="shipmentId" />
+    <result column="shipment_code_id" jdbcType="INTEGER" property="shipmentCodeId" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="shipment_num" jdbcType="INTEGER" property="shipmentNum" />
+    <result column="packing_box_id" jdbcType="INTEGER" property="packingBoxId" />
+    <result column="doz_per_box" jdbcType="INTEGER" property="dozPerBox" />
+    <result column="net_weight" jdbcType="DOUBLE" property="netWeight" />
+    <result column="gross_weight" jdbcType="DOUBLE" property="grossWeight" />
+    <result column="shipment_desc" jdbcType="VARCHAR" property="shipmentDesc" />
+    <result column="tallas" jdbcType="VARCHAR" property="tallas" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    shipment_id, shipment_code_id, order_id, shipment_num, shipment_desc,packing_box_id,doz_per_box,net_weight,gross_weight,tallas
+  </sql>
+
+<!--  新增出货信息-->
+  <insert id="insertShipmentInfo">
+    insert into shipment_info
+        (shipment_code_id, order_id, shipment_num, shipment_desc,packing_box_id,doz_per_box,net_weight,gross_weight,tallas)
+    values
+        (#{shipmentCodeId},#{orderId},#{shipmentNum},#{shipmentDesc},#{packingBoxId},#{dozPerBox},#{netWeight},#{grossWeight},#{tallas})
+  </insert>
+
+<!--  查询出货单总行数-->
+  <select id="selectShipmentInfoCount" resultType="integer">
+    select count(*)
+    from shipment_info t1,shipment_code t2,order_info t3,style_number t4,factory t5,mark t6,customer t7,packing_box t8
+    where t1.shipment_code_id = t2.shipment_code_id and t1.order_id = t3.order_id and t3.style_id = t4.style_id
+            and t4.factory_id = t5.factory_id and t3.mark_id = t6.mark_id and t6.customer_id = t7.customer_id
+            and t1.packing_box_id = t8.packing_box_id
+    <if test="factoryId != null ">
+      and t4.factory_id = #{factoryId}
+    </if>
+    <if test="shipmentCodeId != null ">
+      and t1.shipment_code_id = #{shipmentCodeId}
+    </if>
+    <if test="markId != null ">
+      and t3.mark_id = #{markId}
+    </if>
+    <if test="customerId != null ">
+      and t6.customer_id = #{customerId}
+    </if>
+    <if test="styleName != null and styleName != ''">
+      and t4.style_name like concat('%',#{styleName},'%')
+    </if>
+  </select>
+
+<!--  分页查询出货单信息-->
+  <select id="selectShipmentInfoForPage" resultType="com.tzb.oms.page.Shipment">
+    select t1.*,t2.shipment_code_name,t3.stock,t3.style_id,t4.style_name,t4.style_price,
+            t3.mark_id,t6.mark_name,t6.customer_id,t7.customer_name,t4.factory_id,t4.composition,t4.brand,t4.bar_code,t4.fab_desc,t4.style_desc,
+    t5.factory_name,t5.factory_code,t8.box_length,t8.box_width,t8.box_high,t8.volume,t8.box_desc
+
+    from shipment_info t1,shipment_code t2,order_info t3,style_number t4,factory t5,mark t6,customer t7,packing_box t8
+
+    where t1.shipment_code_id = t2.shipment_code_id and t1.order_id = t3.order_id and t3.style_id = t4.style_id
+             and t4.factory_id = t5.factory_id and t3.mark_id = t6.mark_id and t6.customer_id = t7.customer_id
+            and t1.packing_box_id = t8.packing_box_id
+
+    <if test="shipment.factoryId != null ">
+      and t4.factory_id = #{shipment.factoryId}
+    </if>
+    <if test="shipment.shipmentCodeId != null ">
+      and t1.shipment_code_id = #{shipment.shipmentCodeId}
+    </if>
+    <if test="shipment.markId != null ">
+      and t3.mark_id = #{shipment.markId}
+    </if>
+    <if test="shipment.customerId != null ">
+      and t6.customer_id = #{shipment.customerId}
+    </if>
+    <if test="shipment.styleName != null and shipment.styleName != ''">
+      and t4.style_name like concat('%',#{shipment.styleName},'%')
+    </if>
+    order by t1.shipment_id desc
+    limit #{page.limitIndex},#{page.pageSize}
+  </select>
+
+<!--  根据shipmentId删除出货单信息-->
+  <delete id="deleteShipmentInfoByShipmentId">
+    delete from shipment_info where shipment_id = #{shipmentId}
+  </delete>
+
+<!--  根据shipmentId查询出货单信息-->
+  <select id="selectShipmentInfoByShipmentId" resultType="com.tzb.oms.entity.ShipmentInfo">
+    select * from shipment_info where shipment_id = #{shipmentId}
+  </select>
+
+<!--  根据ID修改出货单信息-->
+  <update id="updateShipmentInfo">
+    update shipment_info
+    set
+    shipment_code_id = #{shipmentCodeId},shipment_num = #{shipmentNum},shipment_desc = #{shipmentDesc},
+    packing_box_id = #{packingBoxId},doz_per_box = #{dozPerBox},net_weight = #{netWeight},gross_weight = #{grossWeight},tallas = #{tallas}
+    where shipment_id = #{shipmentId}
+  </update>
+
+<!--  根据条件查询出货单信息，导入Excel-->
+  <select id="selectShipmentInfoForExcel" resultType="com.tzb.oms.page.Shipment">
+    select t1.*,t2.shipment_code_name,t3.stock,t3.style_id,t4.style_name,t4.style_price,
+    t3.mark_id,t6.mark_name,t6.customer_id,t7.customer_name,t4.factory_id,t4.composition,t4.brand,t4.bar_code,t4.fab_desc,t4.style_desc,
+    t5.factory_name,t5.factory_code,t8.box_length,t8.box_width,t8.box_high,t8.volume,t8.box_desc
+
+    from shipment_info t1,shipment_code t2,order_info t3,style_number t4,factory t5,mark t6,customer t7,packing_box t8
+
+    where t1.shipment_code_id = t2.shipment_code_id and t1.order_id = t3.order_id and t3.style_id = t4.style_id
+    and t4.factory_id = t5.factory_id and t3.mark_id = t6.mark_id and t6.customer_id = t7.customer_id
+    and t1.packing_box_id = t8.packing_box_id
+
+
+    <if test="shipment.factoryId != null ">
+      and t4.factory_id = #{shipment.factoryId}
+    </if>
+    <if test="shipment.shipmentCodeId != null ">
+      and t1.shipment_code_id = #{shipment.shipmentCodeId}
+    </if>
+    <if test="shipment.markId != null ">
+      and t3.mark_id = #{shipment.markId}
+    </if>
+    <if test="shipment.customerId != null ">
+      and t6.customer_id = #{shipment.customerId}
+    </if>
+    <if test="shipment.styleName != null and shipment.styleName != ''">
+      and t4.style_name like concat('%',#{shipment.styleName},'%')
+    </if>
+    order by t1.shipment_id desc
+  </select>
+
+<!--  从Excel批量导入shipmentInfo-->
+  <insert id="saveShipmentInfoByExcel" parameterType="java.util.List">
+    insert into shipment_info (shipment_code_id, order_id, shipment_num, shipment_desc, packing_box_id, doz_per_box, net_weight, gross_weight, tallas)
+    values
+      <foreach collection="list" item="item" separator=",">
+        (#{item.shipmentCodeId},#{item.orderId},#{item.shipmentNum},#{item.shipmentDesc},#{item.packingBoxId},#{item.dozPerBox},#{item.netWeight},#{item.grossWeight},#{item.tallas})
+      </foreach>
+  </insert>
+</mapper>

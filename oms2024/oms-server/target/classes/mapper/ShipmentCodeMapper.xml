@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzb.oms.mapper.ShipmentCodeMapper">
+  <resultMap id="BaseResultMap" type="com.tzb.oms.entity.ShipmentCode">
+    <!--@mbg.generated-->
+    <!--@Table shipment_code-->
+    <id column="shipment_code_id" jdbcType="INTEGER" property="shipmentCodeId" />
+    <result column="shipment_code_name" jdbcType="VARCHAR" property="shipmentCodeName" />
+    <result column="shipment_total_price" jdbcType="DECIMAL" property="shipmentTotalPrice" />
+    <result column="shipment_date" jdbcType="TIMESTAMP" property="shipmentDate" />
+    <result column="shipment_code_desc" jdbcType="VARCHAR" property="shipmentCodeDesc" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    shipment_code_id, shipment_code_name, shipment_total_price, shipment_date, shipment_code_desc
+  </sql>
+
+<!--  新增出货单编码-->
+  <insert id="insertShipmentCode">
+    insert into shipment_code
+      (shipment_code_name, shipment_total_price, shipment_date, shipment_code_desc)
+    values
+      (#{shipmentCodeName},#{shipmentTotalPrice},#{shipmentDate},#{shipmentCodeDesc})
+  </insert>
+
+<!--  查询出货单编码总行数-->
+  <select id="selectShipmentCodeCount" resultType="integer">
+    select count(*)
+    from shipment_code
+    <where>
+      <if test="shipmentCodeName != null and shipmentCodeName != ''">
+        and shipment_code_name like concat('%',#{shipmentCodeName},'%')
+      </if>
+    </where>
+  </select>
+
+<!--  分页查询出货单编码-->
+  <select id="selectShipmentCodeForPage" resultType="com.tzb.oms.entity.ShipmentCode">
+    select *
+    from shipment_code
+    <where>
+      <if test="shipmentCode.shipmentCodeName != null and shipmentCode.shipmentCodeName != ''">
+        and shipment_code_name like concat('%',#{shipmentCode.shipmentCodeName},'%')
+      </if>
+    </where>
+    order by shipment_code_id desc
+    limit #{page.limitIndex},#{page.pageSize}
+  </select>
+
+<!--  根据出货单编码ID修改出货单编码-->
+  <update id="updateShipmentCode">
+    update shipment_code
+    set shipment_code_name = #{shipmentCodeName},shipment_date = #{shipmentDate},shipment_code_desc = #{shipmentCodeDesc}
+    where shipment_code_id = #{shipmentCodeId}
+  </update>
+
+<!--  根据出货单编码ID删除编码信息-->
+  <delete id="deleteShipmentCode">
+    delete from shipment_code where shipment_code_id = #{shipmentCodeId}
+  </delete>
+
+<!--  获取出货单编码列表-->
+  <select id="selectShipmentCodeList" resultType="com.tzb.oms.entity.ShipmentCode">
+    select * from shipment_code order by shipment_code_id desc
+  </select>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzb.oms.mapper.StyleSizeMapper">
+  <resultMap id="BaseResultMap" type="com.tzb.oms.entity.StyleSize">
+    <!--@mbg.generated-->
+    <!--@Table style_size-->
+    <id column="style_size_id" jdbcType="INTEGER" property="styleSizeId" />
+    <result column="style_id" jdbcType="INTEGER" property="styleId" />
+    <result column="size_name" jdbcType="VARCHAR" property="sizeName" />
+    <result column="size_matching" jdbcType="INTEGER" property="sizeMatching" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    style_size_id, style_id, size_name, size_matching
+  </sql>
+
+<!--  新增尺码配比-->
+  <insert id="insertStyleSize">
+    insert into style_size
+    (style_id, size_name, size_matching)
+    values (#{styleId},#{sizeName},#{sizeMatching})
+  </insert>
+
+<!--  根据款号ID获得响应的尺码配比列表-->
+  <select id="selectStyleSizeByStyleId" resultType="com.tzb.oms.entity.StyleSize">
+    select
+    <include refid="Base_Column_List">
+    </include>
+    from style_size where style_id = #{styleId}
+  </select>
+
+<!--  根据ID修改尺码配比信息-->
+  <update id="updateStyleSize">
+    update style_size
+    set size_name = #{sizeName},size_matching = #{sizeMatching}
+    where style_size_id = #{styleSizeId}
+  </update>
+
+<!--  根据id删除尺码配比-->
+  <delete id="deleteStyleSize">
+    delete from style_size
+    where style_size_id = #{styleSizeId}
+  </delete>
+
+<!--  根据款号Id删除响应的尺码配比信息-->
+  <delete id="deleteStyleSizeByStyleId">
+    delete from style_size where style_id = #{styleId}
+  </delete>
+</mapper>

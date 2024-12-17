@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzb.oms.mapper.MarkMapper">
+  <resultMap id="BaseResultMap" type="com.tzb.oms.entity.Mark">
+    <!--@mbg.generated-->
+    <!--@Table mark-->
+    <id column="mark_id" jdbcType="INTEGER" property="markId" />
+    <result column="mark_name" jdbcType="CHAR" property="markName" />
+    <result column="mark_desc" jdbcType="VARCHAR" property="markDesc" />
+    <result column="customer_id" jdbcType="INTEGER" property="customerId" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    mark_id, mark_name, mark_desc, customer_id
+  </sql>
+
+<!--  查询所有唛头-->
+  <select id="selectAllMark" resultMap="BaseResultMap">
+    select t1.*,t2.customer_name from mark t1,customer t2 where t1.customer_id = t2.customer_id
+  </select>
+
+<!--  新增唛头-->
+  <insert id="insertMark">
+    insert into mark(mark_name, mark_desc, customer_id)
+    values (#{markName},#{markDesc},#{customerId})
+  </insert>
+
+<!--  根据id编辑唛头-->
+  <update id="updateMarkById">
+    update mark
+    set mark_name = #{markName},mark_desc = #{markDesc},customer_id = #{customerId}
+    where mark_id = #{markId}
+  </update>
+
+<!--  根据id删除唛头-->
+  <delete id="deleteMarkById">
+    delete from mark where mark_id = #{markId}
+  </delete>
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzb.oms.mapper.StyleNumberMapper">
+  <resultMap id="BaseResultMap" type="com.tzb.oms.entity.StyleNumber">
+    <!--@mbg.generated-->
+    <!--@Table style_number-->
+    <id column="style_id" jdbcType="INTEGER" property="styleId" />
+    <result column="style_name" jdbcType="VARCHAR" property="styleName" />
+    <result column="style_img" jdbcType="VARCHAR" property="styleImg" />
+    <result column="style_color_img" jdbcType="VARCHAR" property="styleColorImg" />
+    <result column="style_price" jdbcType="DECIMAL" property="stylePrice" />
+    <result column="total_price" jdbcType="DECIMAL" property="totalPrice" />
+    <result column="style_total" jdbcType="INTEGER" property="styleTotal" />
+    <result column="style_desc" jdbcType="LONGVARCHAR" property="styleDesc" />
+    <result column="order_code_id" jdbcType="INTEGER" property="orderCodeId" />
+    <result column="order_code_name" jdbcType="VARCHAR" property="orderCodeName" />
+    <result column="brand" jdbcType="VARCHAR" property="brand" />
+    <result column="composition" jdbcType="VARCHAR" property="composition" />
+    <result column="bar_code" jdbcType="VARCHAR" property="barCode" />
+    <result column="fab_desc" jdbcType="VARCHAR" property="fabDesc" />
+    <result column="factory_id" jdbcType="INTEGER" property="factoryId" />
+    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
+  </resultMap>
+
+<!--  添加款号-->
+  <insert id="insertStyleNumber">
+    insert into style_number
+    (style_name, style_img, style_color_img, style_price, style_total, style_desc, order_code_id, factory_id, brand,composition,bar_code,fab_desc)
+    values
+      (#{styleName},#{styleImg},#{styleColorImg},#{stylePrice},#{styleTotal},#{styleDesc},#{orderCodeId},#{factoryId},#{brand},#{composition},#{barCode},#{fabDesc})
+  </insert>
+
+<!--  根据id查询款号信息-->
+  <select id="selectStyleNumberById" resultType="com.tzb.oms.entity.StyleNumber">
+    select * from style_number where style_id = #{styleId}
+  </select>
+
+<!--  查询款号总行数-->
+  <select id="selectStyleNumberCount" resultType="integer">
+    select count(*)
+    from style_number sn,factory f,order_code oc
+    where sn.factory_id = f.factory_id and sn.order_code_id = oc.order_code_id
+    <if test="factoryId != null ">
+      and f.factory_id = #{factoryId}
+    </if>
+    <if test="orderCodeId != null ">
+      and oc.order_code_id = #{orderCodeId}
+    </if>
+    <if test="styleName != null and styleName != ''">
+      and sn.style_name like concat('%',#{styleName},'%')
+    </if>
+  </select>
+
+<!--  分页查询款号-->
+  <select id="selectStyleNumberPage" resultType="com.tzb.oms.entity.StyleNumber">
+    select sn.*,f.factory_name,f.factory_code,oc.order_code_name
+    from style_number sn,factory f,order_code oc
+    where sn.factory_id = f.factory_id and sn.order_code_id = oc.order_code_id
+    <if test="styleNumber.factoryId != null ">
+      and f.factory_id = #{styleNumber.factoryId}
+    </if>
+    <if test="styleNumber.orderCodeId != null ">
+      and oc.order_code_id = #{styleNumber.orderCodeId}
+    </if>
+    <if test="styleNumber.styleName != null and styleNumber.styleName != ''">
+      and sn.style_name like concat('%',#{styleNumber.styleName},'%')
+    </if>
+    order by sn.style_id desc
+    limit #{page.limitIndex},#{page.pageSize}
+
+  </select>
+
+<!--  根据ID修改款号-->
+  <update id="updateStyleNumber">
+    update style_number
+    set style_name = #{styleName},style_img = #{styleImg},style_price = #{stylePrice},style_desc = #{styleDesc},
+        order_code_id = #{orderCodeId},factory_id = #{factoryId},bar_code = #{barCode},fab_desc = #{fabDesc},brand = #{brand},composition = #{composition}
+    where style_id = #{styleId}
+  </update>
+
+<!--  根据ID修改款号颜色配比图-->
+  <update id="updateStyleColorImg">
+    update style_number
+    set style_color_img = #{styleColorImg}
+    where style_id = #{styleId}
+  </update>
+
+<!--根据款号ID删除款号信息-->
+  <delete id="deleteStyleNumber">
+    delete from style_number
+    where style_id = #{styleId}
+  </delete>
+
+<!--  根据款号id列表获得款号信息列表-->
+  <select id="selectStyleNumberByStyleIdListForPage" resultType="com.tzb.oms.entity.StyleNumber">
+    select sn.*,f.factory_name,oc.order_code_name
+    from style_number sn left join factory f on sn.factory_id = f.factory_id
+                        left join order_code oc on sn.order_code_id = oc.order_code_id
+    <where>
+      <if test="styleIdList != null and styleIdList.size() > 0">
+        and sn.style_id in
+        <foreach collection="styleIdList" item="styleId" open="(" close=")" separator=",">
+          #{styleId}
+        </foreach>
+      </if>
+    </where>
+    order by sn.style_id desc
+    limit #{page.limitIndex},#{page.pageSize}
+  </select>
+
+</mapper>

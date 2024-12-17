@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tzb.oms.mapper.OrderCodeMapper">
+
+    <resultMap type="OrderCode" id="orderCodeResult">
+        <id column="order_code_id" property="orderCodeId" />
+        <result column="order_code_name" property="orderCodeName" />
+        <result column="create_date" property="createDate" />
+        <result column="order_code_desc" property="orderCodeDesc" />
+    </resultMap>
+
+<!--添加用户编码-->
+    <insert id="insertOrderCode">
+        insert into order_code
+        (order_code_name,create_date,order_code_desc)
+        values
+            (#{orderCodeName},#{createDate},#{orderCodeDesc})
+    </insert>
+<!-- 查询所有的订单编码-->
+    <select id="findAllOrderCode" resultMap="orderCodeResult">
+        select * from order_code
+    </select>
+
+<!--根据id修改订单编码-->
+    <update id="updateOrderCode">
+        update order_code
+        set order_code_name = #{orderCodeName},order_code_desc = #{orderCodeDesc},create_date = #{createDate}
+        where order_code_id = #{orderCodeId}
+    </update>
+
+<!--根据id删除订单编码-->
+    <delete id="delOrderCodeById">
+        delete from order_code where order_code_id = #{orderCodeId}
+    </delete>
+</mapper>

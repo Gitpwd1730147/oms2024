@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzb.oms.mapper.PackingBoxMapper">
+  <resultMap id="BaseResultMap" type="com.tzb.oms.entity.PackingBox">
+    <!--@mbg.generated-->
+    <!--@Table packing_box-->
+    <id column="packing_box_id" jdbcType="INTEGER" property="packingBoxId" />
+    <result column="specification" jdbcType="VARCHAR" property="specification" />
+    <result column="box_length" jdbcType="DOUBLE" property="boxLength" />
+    <result column="box_width" jdbcType="DOUBLE" property="boxWidth" />
+    <result column="box_high" jdbcType="DOUBLE" property="boxHigh" />
+    <result column="volume" jdbcType="DOUBLE" property="volume" />
+    <result column="box_desc" jdbcType="VARCHAR" property="boxDesc" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    packing_box_id, specification, box_length, box_width, box_high, volume, box_desc
+  </sql>
+
+<!--  获得包装箱信息列表-->
+  <select id="selectAllPackingBox" resultMap="BaseResultMap">
+    select * from packing_box
+  </select>
+
+<!--  新增包装箱信息-->
+  <insert id="insertPackingBox">
+    insert into packing_box(specification, box_length, box_width, box_high, volume, box_desc)
+    values
+      (#{specification},#{boxLength},#{boxWidth},#{boxHigh},#{volume},#{boxDesc})
+  </insert>
+
+<!--  根据packingBoxId修改包装箱信息-->
+  <update id="updatePackingBox">
+    update packing_box
+    set
+      specification = #{specification},box_length = #{boxLength},box_width = #{boxWidth},box_high = #{boxHigh},box_desc = #{boxDesc},volume = #{volume}
+    where packing_box_id = #{packingBoxId}
+  </update>
+
+<!--  根据packingBoxId删除包装箱信息-->
+  <delete id="deletePackingBoxById">
+    delete from packing_box where packing_box_id = #{packingBoxId}
+  </delete>
+
+<!--  根据长宽高获得包装箱的packingBoxId-->
+  <select id="selectPackingBoxIdByLWH" resultType="integer">
+    select packing_box_id from packing_box where box_high = #{boxHigh} and box_width = #{boxWidth} and box_length = #{boxLength}
+  </select>
+</mapper>

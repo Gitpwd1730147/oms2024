@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzb.oms.mapper.CustomerMapper">
+  <resultMap id="BaseResultMap" type="com.tzb.oms.entity.Customer">
+    <!--@mbg.generated-->
+    <!--@Table customer-->
+    <id column="customer_id" jdbcType="INTEGER" property="customerId" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="customer_desc" jdbcType="VARCHAR" property="customerDesc" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    customer_id, customer_name, customer_desc
+  </sql>
+
+<!--添加客户-->
+  <insert id="addCustomer">
+    insert into customer
+    (customer_name,customer_desc)
+    values (#{customerName},#{customerDesc})
+  </insert>
+
+<!--  获取所有客户信息-->
+  <select id="selectAllCustomer" resultMap="BaseResultMap">
+    select * from customer
+  </select>
+
+<!--  根据客户id修改客户信息-->
+  <update id="updateCustomerById">
+    update customer
+    set customer_name = #{customerName},customer_desc = #{customerDesc}
+    where customer_id = #{customerId}
+  </update>
+
+<!--  根据id删除客户信息-->
+  <delete id="deleteCustomerById">
+    delete from customer where customer_id = #{customerId}
+  </delete>
+</mapper>

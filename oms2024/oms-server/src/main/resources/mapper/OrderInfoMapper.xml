@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzb.oms.mapper.OrderInfoMapper">
+  <resultMap id="BaseResultMap" type="com.tzb.oms.entity.OrderInfo">
+    <!--@mbg.generated-->
+    <!--@Table order_info-->
+    <id column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="style_id" jdbcType="INTEGER" property="styleId" />
+    <result column="mark_id" jdbcType="INTEGER" property="markId" />
+    <result column="order_num" jdbcType="INTEGER" property="orderNum" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="order_desc" jdbcType="VARCHAR" property="orderDesc" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    order_id, style_id, mark_id, order_num,stock, order_desc
+  </sql>
+
+<!--  根据款号id获取响应的订单数量列表-->
+  <select id="selectOrderInfoByStyleId" resultType="com.tzb.oms.entity.OrderInfo">
+    select t.order_id,t.style_id,t2.style_name,t.mark_id,t1.mark_name,t.order_num,t.order_desc,t.stock
+    from order_info t,mark t1,style_number t2
+    where t.mark_id = t1.mark_id and t.style_id = t2.style_id and t.style_id = #{styleId}
+  </select>
+
+<!--  新增款号订单数信息-->
+  <insert id="insertOrderInfo">
+    insert into order_info
+    (style_id, mark_id, order_num,stock, order_desc)
+    values (#{styleId},#{markId},#{orderNum},#{orderNum},#{orderDesc})
+  </insert>
+
+<!--  根据ID修改订单数量信息-->
+  <update id="updateOrderInfo">
+    update order_info
+    set mark_id = #{markId},order_num = #{orderNum},stock = #{stock},order_desc = #{orderDesc}
+    where order_id = #{orderId}
+  </update>
+
+<!--  根据ID删除订单数量信息-->
+  <delete id="deleteOrderInfo">
+    delete from order_info
+    where order_id = #{orderId}
+  </delete>
+
+<!--  根据款号ID删除响应的订单数量信息-->
+  <delete id="deleteOrderInfoByStyleId">
+    delete from order_info
+    where style_id = #{styleId}
+  </delete>
+
+<!--  根据查询条件获得款号id列表-->
+  <select id="selectStyleIdByQueryCondition" resultType="integer">
+    select distinct (t1.style_id)
+    from order_info t1,style_number t2,mark t3,customer t4,factory t5
+    where t1.style_id = t2.style_id and t2.factory_id = t5.factory_id and t1.mark_id = t3.mark_id and t3.customer_id = t4.customer_id
+    <if test="factoryId != null ">
+      and t2.factory_id = #{factoryId}
+    </if>
+    <if test="orderCodeId != null ">
+      and t2.order_code_id = #{orderCodeId}
+    </if>
+    <if test="customerId != null ">
+      and t3.customer_id = #{customerId}
+    </if>
+    <if test="styleName != null and styleName != ''">
+      and t2.style_name like concat('%',#{styleName},'%')
+    </if>
+  </select>
+
+<!--  查询订单总行数-->
+<select id="selectOrderInfoCount" resultType="integer">
+  select count(*)
+  from order_info t1,style_number t2,factory t3,mark t4,customer t5,order_code t6
+  where t1.style_id = t2.style_id and t2.order_code_id = t6.order_code_id and t2.factory_id = t3.factory_id and t1.mark_id = t4.mark_id and t4.customer_id = t5.customer_id
+  <if test="factoryId != null ">
+    and t2.factory_id = #{factoryId}
+  </if>
+  <if test="markId != null ">
+    and t1.mark_id = #{markId}
+  </if>
+  <if test="orderCodeId != null ">
+    and t2.order_code_id = #{orderCodeId}
+  </if>
+  <if test="customerId != null ">
+    and t4.customer_id = #{customerId}
+  </if>
+  <if test="styleName != null and styleName != ''">
+    and t2.style_name like concat('%',#{styleName},'%')
+  </if>
+</select>
+
+<!--  分页查询订单信息-->
+  <select id="selectOrderInfoForPage" resultType="com.tzb.oms.page.Order">
+    select t1.*,t2.style_name,t2.factory_id,t3.factory_name,t3.factory_code,t4.mark_name,t4.customer_id,t5.customer_name,t2.order_code_id,t6.order_code_name,t2.style_price
+    from order_info t1,style_number t2,factory t3,mark t4,customer t5,order_code t6
+    where t1.style_id = t2.style_id and t2.order_code_id = t6.order_code_id and t2.factory_id = t3.factory_id and t1.mark_id = t4.mark_id and t4.customer_id = t5.customer_id
+    <if test="order.factoryId != null ">
+      and t2.factory_id = #{order.factoryId}
+    </if>
+    <if test="order.markId != null ">
+      and t1.mark_id = #{order.markId}
+    </if>
+    <if test="order.orderCodeId != null ">
+      and t2.order_code_id = #{order.orderCodeId}
+    </if>
+    <if test="order.customerId != null ">
+      and t4.customer_id = #{order.customerId}
+    </if>
+    <if test="order.styleName != null and order.styleName != ''">
+      and t2.style_name like concat('%',#{order.styleName},'%')
+    </if>
+    order by t1.style_id desc
+    limit #{page.limitIndex},#{page.pageSize}
+  </select>
+
+<!--  根据orderId查询订单信息-->
+  <select id="selectOrderInfoByOrderId" resultType="com.tzb.oms.entity.OrderInfo">
+    select * from order_info where order_id = #{orderId}
+  </select>
+
+<!--  根据条件查询数据结果，导出到Excel中-->
+  <select id="selectOrderInfoForExcel" resultType="com.tzb.oms.page.Order">
+    select t1.*,t2.style_name,t2.factory_id,t3.factory_name,t3.factory_code,t4.mark_name,t4.customer_id,t5.customer_name,t2.order_code_id,t6.order_code_name,t2.style_price
+    from order_info t1,style_number t2,factory t3,mark t4,customer t5,order_code t6
+    where t1.style_id = t2.style_id and t2.order_code_id = t6.order_code_id and t2.factory_id = t3.factory_id and t1.mark_id = t4.mark_id and t4.customer_id = t5.customer_id
+    <if test="order.factoryId != null ">
+      and t2.factory_id = #{order.factoryId}
+    </if>
+    <if test="order.markId != null ">
+      and t1.mark_id = #{order.markId}
+    </if>
+    <if test="order.orderCodeId != null ">
+      and t2.order_code_id = #{order.orderCodeId}
+    </if>
+    <if test="order.customerId != null ">
+      and t4.customer_id = #{order.customerId}
+    </if>
+    <if test="order.styleName != null and order.styleName != ''">
+      and t2.style_name like concat('%',#{order.styleName},'%')
+    </if>
+    order by t1.style_id desc
+  </select>
+
+<!--  根据款号和唛头查询出订单编号orderId-->
+  <select id="selectOrderIdByStyleNameAndMarkName" resultType="integer">
+    select t1.order_id
+    from order_info t1,mark t2,style_number t3
+    where t1.mark_id = t2.mark_id and t1.style_id = t3.style_id and t2.mark_name = #{markName} and t3.style_name = #{styleName}
+  </select>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzb.oms.mapper.TestMapper">
+  <resultMap id="BaseResultMap" type="com.tzb.oms.entity.Test">
+    <!--@mbg.generated-->
+    <!--@Table test-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, name, age, sex, telephone
+  </sql>
+
+<!--  从Excel批量添加-->
+  <insert id="saveTest" parameterType="java.util.List">
+        insert into test(name, age, sex, telephone,addr,shipment_id,order_id,ceshi,chang,kuan,gao) values
+          <foreach collection="list" separator="," item="item">
+            (#{item.name},#{item.age},#{item.sex},#{item.telephone},#{item.addr},#{item.shipmentId},#{item.orderId},#{item.ceshi},#{item.chang},#{item.kuan},#{item.gao})
+          </foreach>
+  </insert>
+
+  <select id="selectAllTestByExcel" resultMap="BaseResultMap">
+    select * from test
+  </select>
+</mapper>

@@ -1,0 +1,5 @@
+# Created at 2024-05-20T17:17:11.319
+Boot Manifest-JAR contains absolute paths in classpath 'F:\dev\codework\oms2024\oms-server\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+
